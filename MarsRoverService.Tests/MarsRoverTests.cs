@@ -1,6 +1,6 @@
 namespace MarsRoverService.Tests;
 
-public class Tests
+public class MarsRoverTests
 {
     [SetUp]
     public void Setup()
