@@ -44,15 +44,23 @@ public class MarsRoverTests
     [Test]
     public void Test_If_Rover_Coordinates_And_Direction_Are_Set_As_Expected()
     {
-        _rover.SetRoverPosition(1,1,'N');
+        _plateau.SetPlateauGridSize(5, 5);
+        _rover.SetRoverPosition(_plateau.GridMaxXCoordinate, _plateau.GridMaxYCoordinate, 1, 1,'N');
         _rover.CurrentXCoordinate.Should().Be(1);
         _rover.CurrentYCoordinate.Should().Be(1);
         _rover.CurrentDirectionFacing.Should().Be('N');
+        /*
+                _plateau.SetPlateauGridSize(4, 4);
+                _rover.SetRoverPosition(_plateau, 2, 3, 'E');
+                _rover.CurrentXCoordinate.Should().Be(2);
+                _rover.CurrentYCoordinate.Should().Be(3);
+                _rover.CurrentDirectionFacing.Should().Be('E');
+        */
 
-        _rover.SetRoverPosition(2, 3, 'E');
-        _rover.CurrentXCoordinate.Should().Be(2);
-        _rover.CurrentYCoordinate.Should().Be(3);
-        _rover.CurrentDirectionFacing.Should().Be('E');
+        _plateau.SetPlateauGridSize(5, 5);
+        var exceptionRoverPosition = Assert.Throws<ArgumentException>(() 
+            => _rover.SetRoverPosition(_plateau.GridMaxXCoordinate, _plateau.GridMaxYCoordinate, 5, 6, 'N'));
+        Assert.That(exceptionRoverPosition.Message, Is.EqualTo("Rover position should not be outside the plateau grid."));
 
     }
 }
