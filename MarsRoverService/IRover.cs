@@ -9,8 +9,8 @@ namespace MarsRoverService
     {
         public int CurrentXCoordinate { get; set; }
         public int CurrentYCoordinate { get; set; }
-        public string CurrentDirectionFacing { get; set; }
+        public char CurrentDirectionFacing { get; set; }
 
-        public void SetRoverPosition();
+        public void SetRoverPosition(int xCoordinate, int yCoordinate, char direction);
     }
 }

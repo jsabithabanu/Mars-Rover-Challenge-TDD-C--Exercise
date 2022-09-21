@@ -40,4 +40,19 @@ public class MarsRoverTests
         var exceptionGridSize = Assert.Throws<ArgumentException>(() => _plateau.SetPlateauGridSize(0, 0));
         Assert.That(exceptionGridSize.Message, Is.EqualTo("The plateau grid size must be greater than (0, 0)"));
     }
+
+    [Test]
+    public void Test_If_Rover_Coordinates_And_Direction_Are_Set_As_Expected()
+    {
+        _rover.SetRoverPosition(1,1,'N');
+        _rover.CurrentXCoordinate.Should().Be(1);
+        _rover.CurrentYCoordinate.Should().Be(1);
+        _rover.CurrentDirectionFacing.Should().Be('N');
+
+        _rover.SetRoverPosition(2, 3, 'E');
+        _rover.CurrentXCoordinate.Should().Be(2);
+        _rover.CurrentYCoordinate.Should().Be(3);
+        _rover.CurrentDirectionFacing.Should().Be('E');
+
+    }
 }

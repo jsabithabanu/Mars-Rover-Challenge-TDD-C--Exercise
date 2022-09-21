@@ -22,7 +22,13 @@ namespace MarsRoverService
             GridMaxXCoordinate = gridMaxXCoordinate;
             GridMaxYCoordinate = gridMaxYCoordinate;
 
-            if(gridMaxXCoordinate < 0 || GridMaxYCoordinate < 0)
+            ValidatePlateauGridSize(gridMaxXCoordinate, gridMaxYCoordinate);
+            
+        }
+
+        public void ValidatePlateauGridSize(int gridMaxXCoordinate, int gridMaxYCoordinate)
+        {
+            if (gridMaxXCoordinate < 0 || GridMaxYCoordinate < 0)
                 throw new ArgumentException("Please enter a valid plateau grid size.");
 
             if (gridMaxXCoordinate == 0 && GridMaxYCoordinate == 0)
