@@ -21,6 +21,12 @@ namespace MarsRoverService
             GridStartYCoordinate = _STARTY;
             GridMaxXCoordinate = gridMaxXCoordinate;
             GridMaxYCoordinate = gridMaxYCoordinate;
+
+            if(gridMaxXCoordinate < 0 || GridMaxYCoordinate < 0)
+                throw new ArgumentException("Please enter a valid plateau grid size.");
+
+            if (gridMaxXCoordinate == 0 && GridMaxYCoordinate == 0)
+                throw new ArgumentException("The plateau grid size must be greater than (0, 0)");
         }
     }
 }
