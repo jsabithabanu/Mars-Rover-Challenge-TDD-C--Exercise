@@ -7,11 +7,11 @@ namespace MarsRoverService
 {
     public interface IPlateau
     {
-        public int GridEndXCoordinate { get; set; }
-        public int GridEndYCoordinate { get; set; }
+        public int GridMaxXCoordinate { get; set; }
+        public int GridMaxYCoordinate { get; set; }
         public int GridStartXCoordinate { get; set; }
         public int GridStartYCoordinate { get; set; }
 
-        public void SetPlateauGridSize();
+        public void SetPlateauGridSize(int gridMaxXCoordinate, int gridMaxYCoordinate);
     }
 }
