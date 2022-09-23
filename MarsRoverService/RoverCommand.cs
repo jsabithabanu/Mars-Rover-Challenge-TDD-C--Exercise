@@ -7,8 +7,8 @@ namespace MarsRoverService
 {
     public enum RoverCommand
     {
-        Left,
-        Right,
+        TurnLeft,
+        TurnRight,
         MoveForward
     }
 }
