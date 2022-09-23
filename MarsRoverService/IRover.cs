@@ -9,7 +9,7 @@ namespace MarsRoverService
     {
         public int CurrentXCoordinate { get; set; }
         public int CurrentYCoordinate { get; set; }
-        public char CurrentDirectionFacing { get; set; }
+        public Direction CurrentDirectionFacing { get; set; }
 
         public void SetRoverPosition(int gridMaxXCoordinate, int gridMaxYCoordinate,
             int xCoordinate, int yCoordinate, char direction);
