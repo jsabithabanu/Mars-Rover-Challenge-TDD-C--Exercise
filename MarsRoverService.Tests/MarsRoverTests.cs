@@ -12,32 +12,29 @@ public class MarsRoverTests
     private Plateau _plateau;
     private CommandCenter _commandCenter;
 
-    private const int _gridMaxXCoordinate = 5;
-    private const int _gridMaxYCoordinate = 5;
+    private const int _GRID_MAX_X_COORDINATE = 5;
+    private const int _GRID_MAX_Y_COORDINATE = 5;
 
     [SetUp]
     public void Setup()
     {
+        //Creating an instance and setting up the plateau grid size
         _plateau = new Plateau();
-        //_plateau.SetPlateauGridSize(_gridMaxXCoordinate, _gridMaxYCoordinate);
+        _plateau.SetPlateauGridSize(_GRID_MAX_X_COORDINATE, _GRID_MAX_Y_COORDINATE);
 
-        _rover_R01 = new Rover();
-        _rover_R02 = new Rover();
-        
+        //Creating instances for 2 Rovers - "Rover R01", "Rover R02"
+        _rover_R01 = new Rover(_plateau);
+        _rover_R02 = new Rover(_plateau);
+
+        //Creating instance for CommandCenter
         _commandCenter = new CommandCenter();        
     }
 
     [Test]
     public void Test_If_Plateau_Grid_Size_Is_Set_As_Expected()
     {
-        _plateau.SetPlateauGridSize(5, 5);
         _plateau.GridMaxXCoordinate.Should().Be(5);
         _plateau.GridMaxYCoordinate.Should().Be(5);
-
-        _plateau.SetPlateauGridSize(3, 4);
-        _plateau.GridMaxXCoordinate.Should().Be(3);
-        _plateau.GridMaxYCoordinate.Should().Be(4);
-
     }
 
     [Test]
@@ -54,42 +51,57 @@ public class MarsRoverTests
     [Test]
     public void Test_If_Rover_Coordinates_And_Direction_Are_Set_As_Expected()
     {
-        _plateau.SetPlateauGridSize(5, 5);
-        _rover_R01.SetRoverPosition(_plateau.GridMaxXCoordinate, _plateau.GridMaxYCoordinate, 1, 1, 'N');
+        //1st Rover
+        _rover_R01.SetRoverPosition(1, 2, 'N');
         _rover_R01.CurrentXCoordinate.Should().Be(1);
-        _rover_R01.CurrentYCoordinate.Should().Be(1);
+        _rover_R01.CurrentYCoordinate.Should().Be(2);
         _rover_R01.CurrentDirectionFacing.Should().Be(Direction.North);
+
+        //2nd Rover
+        _rover_R02.SetRoverPosition(3, 3, 'E');
+        _rover_R02.CurrentXCoordinate.Should().Be(3);
+        _rover_R02.CurrentYCoordinate.Should().Be(3);
+        _rover_R02.CurrentDirectionFacing.Should().Be(Direction.East);
     }
 
     [Test]
     public void Test_If_Rover_Is_Placed_Within_The_Palteau_As_Expected()
     {
-        _plateau.SetPlateauGridSize(5, 5);
-        var exceptionRoverPosition = Assert.Throws<ArgumentException>(() 
-            => _rover_R01.SetRoverPosition(_plateau.GridMaxXCoordinate, _plateau.GridMaxYCoordinate, 5, 6, 'N'));
-        Assert.That(exceptionRoverPosition.Message, Is.EqualTo("Rover position should not be outside the plateau grid."));
+        //1st Rover
+        var exceptionR01Position = Assert.Throws<ArgumentException>(() 
+            => _rover_R01.SetRoverPosition(5, 6, 'N'));
+        Assert.That(exceptionR01Position.Message, Is.EqualTo("Rover position should not be outside the plateau grid."));
+
+        //2nd Rover
+        var exceptionR02Position = Assert.Throws<ArgumentException>(()
+            => _rover_R02.SetRoverPosition(7, 5, 'N'));
+        Assert.That(exceptionR02Position.Message, Is.EqualTo("Rover position should not be outside the plateau grid."));
 
     }
 
     [Test]
     public void Test_If_Rover_Facing_Direction_After_Move_Is_Set_As_Expected()
-    {
+    {   
         //1st Rover
-        _rover_R01.MoveRover(5, 5, 1, 2, 'N', "LMLMLMLMM");
-        _rover_R01.CurrentDirectionFacing.Should().Be(Direction.North);
+        _rover_R01.SetRoverPosition(1, 2, 'N');
+        _commandCenter.MoveRover(_rover_R01, "LMLMLMLMM");
+        _commandCenter.CurrentDirectionFacing.Should().Be(Direction.North);
 
         //2nd Rover
-        _rover_R02.MoveRover(5, 5, 3, 3, 'E', "MMRMMRMRRM");
-        _rover_R02.CurrentDirectionFacing.Should().Be(Direction.East);
+        _rover_R02.SetRoverPosition(3, 3, 'E');
+        _commandCenter.MoveRover(_rover_R02, "MMRMMRMRRM");
+        _commandCenter.CurrentDirectionFacing.Should().Be(Direction.East);
     }
 
     [Test]
     public void Test_If_Rover_Moves_And_Returns_Position_And_Direction_As_Expected()
     {
-        //1st Rover 
-        _rover_R01.MoveRover(5, 5, 1, 2, 'N', "LMLMLMLMM").Should().Be("1 3 N");
+        //1st Rover
+        _rover_R01.SetRoverPosition(1, 2, 'N');
+        _commandCenter.MoveRover(_rover_R01, "LMLMLMLMM").Should().Be("1 3 N");
 
         //2nd Rover
-        _rover_R02.MoveRover(5, 5, 3, 3, 'E', "MMRMMRMRRM").Should().Be("5 1 E");        
+        _rover_R02.SetRoverPosition(3, 3, 'E');
+        _commandCenter.MoveRover(_rover_R02, "MMRMMRMRRM").Should().Be("5 1 E");
     }
 }

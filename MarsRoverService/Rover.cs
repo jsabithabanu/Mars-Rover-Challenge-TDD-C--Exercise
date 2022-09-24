@@ -6,27 +6,37 @@ using System.Text;
 
 namespace MarsRoverService
 {
-    public class Rover : IRover
+    public class Rover : IRover //, IPlateau
     {
         private const int _DEFAULT_X_VALUE = 0;
         private const int _DEFAULT_Y_VALUE = 0;
         private const char _DEFAULT_FACING = 'N';
         private Plateau _plateau;
-        private readonly Dictionary<char, Direction> _directionDict;
-        private readonly Dictionary<char, RoverCommand> _instructionDict;
+        public readonly Dictionary<char, Direction> _directionDict;
+        public readonly Dictionary<char, RoverCommand> _instructionDict;
+
+        public int GridMaxXCoordinate { get; set; }
+        public int GridMaxYCoordinate { get; set; }
+        public int GridStartXCoordinate { get; set; }
+        public int GridStartYCoordinate { get; set; }
 
         public int CurrentXCoordinate { get; set; }
         public int CurrentYCoordinate { get; set; }
         public Direction CurrentDirectionFacing { get; set; }
-
-        public Rover()
+               
+        public Rover(Plateau plateau)
         {
+            //Initialising plateau and assigning value to it
             _plateau = new Plateau();
-            /* CurrentXCoordinate = _DEFAULT_X_VALUE;
-             CurrentYCoordinate = _DEFAULT_Y_VALUE;
-             CurrentDirectionFacing = _DEFAULT_FACING;
-            */
+            _plateau = plateau;
 
+            //Assigning the coordinates of the plateau to the Rover class's local variables
+            GridMaxXCoordinate = _plateau.GridMaxXCoordinate;
+            GridMaxYCoordinate = _plateau.GridMaxYCoordinate;
+            GridStartXCoordinate = _plateau.GridStartXCoordinate;
+            GridStartYCoordinate = _plateau.GridStartYCoordinate;
+
+            //Dictionary to map Directions to the Acronyms
             _directionDict = new Dictionary<char, Direction>()
             {
                 { 'N', Direction.North },
@@ -35,6 +45,7 @@ namespace MarsRoverService
                 { 'E', Direction.East }
             };
 
+            //Dictionary to map Instructions to the Acronyms
             _instructionDict = new Dictionary<char, RoverCommand>()
             {
                 { 'L', RoverCommand.TurnLeft },
@@ -44,26 +55,22 @@ namespace MarsRoverService
         }
 
         /// <summary>
-        /// 
+        /// Method to set the Rover's position on the plateau
         /// </summary>
-        /// <param name="gridMaxXCoordinate"></param>
-        /// <param name="gridMaxYCoordinate"></param>
         /// <param name="xCoordinate"></param>
         /// <param name="yCoordinate"></param>
         /// <param name="direction"></param>
-        public void SetRoverPosition(int gridMaxXCoordinate, int gridMaxYCoordinate,
-            int xCoordinate, int yCoordinate, char direction)
+        public void SetRoverPosition(int xCoordinate, int yCoordinate, char direction)
         {
             CurrentXCoordinate = xCoordinate;
             CurrentYCoordinate = yCoordinate;
             CurrentDirectionFacing = _directionDict[direction];
 
-            ValidateRoverPositionOnThePlateau(gridMaxXCoordinate, gridMaxYCoordinate, xCoordinate, yCoordinate);
-
+            ValidateRoverPositionOnThePlateau(GridMaxXCoordinate, GridMaxYCoordinate, xCoordinate, yCoordinate);
         }
 
         /// <summary>
-        /// 
+        /// Method to validate the Rover's position on the plateau
         /// </summary>
         /// <param name="gridMaxXCoordinate"></param>
         /// <param name="gridMaxYCoordinate"></param>
@@ -78,112 +85,6 @@ namespace MarsRoverService
 
             if (!(xValueOfRover && yValueOfRover))
                 throw new ArgumentException("Rover position should not be outside the plateau grid.");
-
-        }
-
-        /// <summary>
-        /// Moves the Rover on the plateau based on the instructions given
-        /// </summary>
-        /// <param name="gridMaxXCoordinate"></param>
-        /// <param name="gridMaxYCoordinate"></param>
-        /// <param name="xCoordinate"></param>
-        /// <param name="yCoordinate"></param>
-        /// <param name="direction"></param>
-        /// <param name="movementInstructions"></param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        ///
-        public string MoveRover(int gridMaxXCoordinate, int gridMaxYCoordinate,
-            int xCoordinate, int yCoordinate, char direction, string movementInstructions)
-        {
-            var moveCommand = movementInstructions.ToCharArray();
-            var instructions = moveCommand.Select(action => _instructionDict[action]).ToList();
-            CurrentXCoordinate = xCoordinate;
-            CurrentYCoordinate = yCoordinate;
-            CurrentDirectionFacing = _directionDict[direction];
-
-            foreach (var movement in instructions)
-            {
-                switch (movement)
-                {
-                    case RoverCommand.TurnLeft:
-                        MoveLeft(CurrentDirectionFacing);
-                        break;
-                    case RoverCommand.TurnRight:
-                        MoveRight(CurrentDirectionFacing);
-                        break;
-                    case RoverCommand.MoveForward:
-                        MoveForward(gridMaxXCoordinate, gridMaxYCoordinate, CurrentDirectionFacing);
-                        break;
-                    default:
-                        //throw new ArgumentOutOfRangeException();
-                        throw new ArgumentException("Invalid movement command to the Rover.");
-
-                }
-            }
-            var directionKey = _directionDict.FirstOrDefault(x => x.Value.Equals(CurrentDirectionFacing)).Key.ToString();
-            var output = CurrentXCoordinate + " " + CurrentYCoordinate + " " + directionKey;
-            return output;
-        }
-
-        private Direction MoveLeft(Direction direction) =>
-            direction switch
-            {
-                Direction.North => CurrentDirectionFacing = Direction.West,
-                Direction.South => CurrentDirectionFacing = Direction.East,
-                Direction.West => CurrentDirectionFacing = Direction.South,
-                Direction.East => CurrentDirectionFacing = Direction.North,
-                //_ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
-                _ => throw new ArgumentException("Invalid direction command to the Rover.")
-            };
-
-
-        private Direction MoveRight(Direction direction) =>
-            direction switch
-            {
-                Direction.North => CurrentDirectionFacing = Direction.East,
-                Direction.South => CurrentDirectionFacing = Direction.West,
-                Direction.West => CurrentDirectionFacing = Direction.North,
-                Direction.East => CurrentDirectionFacing = Direction.South,
-                _ => throw new ArgumentException("Invalid direction command to the Rover.")
-            };
-
-        private void MoveForward(int gridMaxXCoordinate, int gridMaxYCoordinate, Direction direction)
-        {
-            switch (direction)
-            {
-                case Direction.North:
-                    {
-                        CurrentYCoordinate += 1;
-                        if (CurrentYCoordinate > gridMaxYCoordinate)
-                            throw new ArgumentException("Rover cannot move outside the plateau. " +
-                                "Please modify the instructions.");
-                        break;
-                    }
-                case Direction.South:
-                    {
-                        CurrentYCoordinate -= 1;
-                        if (CurrentYCoordinate < 0)
-                            throw new ArgumentException("Rover cannot move outside the plateau. " +
-                                "Please modify the instructions.");
-                        break;
-                    }
-                case Direction.East:
-                    {
-                        CurrentXCoordinate += 1;
-                        if (CurrentXCoordinate > gridMaxXCoordinate)
-                            throw new ArgumentException("Rover cannot move outside the plateau. " +
-                                "Please modify the instructions.");
-                        break;
-                    }
-                case Direction.West:
-                    {
-                        CurrentXCoordinate -= 1;
-                        if (CurrentXCoordinate < 0)
-                            throw new ArgumentException("Rover cannot move outside the plateau. " +
-                                "Please modify the instructions.");
-                        break;
-                    }
-            }
-        }
+        }        
     }
 }

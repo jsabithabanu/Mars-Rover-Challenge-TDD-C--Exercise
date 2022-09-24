@@ -15,15 +15,7 @@ namespace MarsRoverService
         public int GridStartYCoordinate { get; set; }
         public int GridMaxXCoordinate { get; set; }
         public int GridMaxYCoordinate { get; set; }
-              
-        public Plateau()
-        {
-            /*
-            GridStartXCoordinate = _STARTX;
-            GridStartYCoordinate = _STARTY;
-            */
-        }
-
+       
         public void SetPlateauGridSize(int gridMaxXCoordinate, int gridMaxYCoordinate)
         {
             GridStartXCoordinate = _STARTX;
@@ -43,13 +35,5 @@ namespace MarsRoverService
             if (gridMaxXCoordinate == 0 && GridMaxYCoordinate == 0)
                 throw new ArgumentException("The plateau grid size must be greater than (0, 0)");
         }
-/*
-        public bool ValidateRoverPositionOnThePlateau(int xCoordinate, int yCoordinate)
-        {
-            var xValueOfRover = xCoordinate >= 0 && xCoordinate <= GridMaxXCoordinate;
-            var yValueOfRover = yCoordinate >= 0 && xCoordinate <= GridMaxYCoordinate;
-            return xValueOfRover && yValueOfRover;
-        }
-*/
     }
 }

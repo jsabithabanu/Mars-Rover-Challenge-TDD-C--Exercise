@@ -11,7 +11,6 @@ namespace MarsRoverService
         public int CurrentYCoordinate { get; set; }
         public Direction CurrentDirectionFacing { get; set; }
 
-        public void SetRoverPosition(int gridMaxXCoordinate, int gridMaxYCoordinate,
-            int xCoordinate, int yCoordinate, char direction);
+        public void SetRoverPosition(int xCoordinate, int yCoordinate, char direction);
     }
 }
