@@ -129,4 +129,17 @@ public class MarsRoverTests
         _newPlateau.pointGridMax.X.Should().Be(6);
         _newPlateau.pointGridMax.Y.Should().Be(6);
     }
+
+    [Test]
+    public void Test_If_Rover_Can_Be_Added_By_The_Command_Center()
+    {
+        Plateau _newPlateau = new();
+        _newPlateau = _commandCenter.AddPlateau(6, 6);
+        Rover _newRover = new(_newPlateau);
+        _newRover = _commandCenter.AddRover(1, 2, 'N');
+        _newRover.pointCurrent.X.Should().Be(1);
+        _newRover.pointCurrent.Y.Should().Be(2);
+        _newRover.CurrentDirectionFacing.Should().Be(Direction.North);
+    }
+    
 }

@@ -130,7 +130,7 @@ namespace MarsRoverService
                     }
             }
         }
-        public void AddRover(int xCoordinate, int yCoordinate, char direction)
+        public Rover AddRover(int xCoordinate, int yCoordinate, char direction)
         {
             if ((RoverList != null) && (!RoverList.Any()))
             {
@@ -147,6 +147,7 @@ namespace MarsRoverService
                     RoverList.Add(_rover);
                 }
             }
+            return _rover;
         }
 
         public Plateau AddPlateau(int gridMaxX, int gridMaxY)
