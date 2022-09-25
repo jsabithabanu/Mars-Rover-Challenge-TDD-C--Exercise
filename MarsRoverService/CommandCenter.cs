@@ -10,6 +10,7 @@ namespace MarsRoverService
         public Direction CurrentDirectionFacing { get; set; }
 
         private Plateau _plateau;
+        private Rover _rover;
 
         public CommandCenter()
         {
@@ -43,13 +44,12 @@ namespace MarsRoverService
                         MoveForward(rover);
                         break;
                     default:
-                        //throw new ArgumentOutOfRangeException();
                         throw new ArgumentException("Invalid movement command to the Rover.");
 
                 }
             }
             var directionKey = rover._directionDict.FirstOrDefault(x => x.Value.Equals(rover.CurrentDirectionFacing)).Key.ToString();
-            var output = rover.CurrentXCoordinate + " " + rover.CurrentYCoordinate + " " + directionKey;
+            var output = rover.pointCurrent.X + " " + rover.pointCurrent.Y + " " + directionKey;
             return output;
         }
 
@@ -66,7 +66,6 @@ namespace MarsRoverService
                 Direction.South => CurrentDirectionFacing = Direction.East,
                 Direction.West => CurrentDirectionFacing = Direction.South,
                 Direction.East => CurrentDirectionFacing = Direction.North,
-                //_ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
                 _ => throw new ArgumentException("Invalid direction command to the Rover.")
             };
 
@@ -91,43 +90,44 @@ namespace MarsRoverService
         /// </summary>
         /// <param name="rover"></param>
         /// <exception cref="ArgumentException"></exception>
+
         private void MoveForward(Rover rover)
         {
+            string exceptionMessage = "Rover cannot move outside the plateau. Please modify the instructions.";          
+
             switch (CurrentDirectionFacing)
             {
                 case Direction.North:
                     {
-                        rover.CurrentYCoordinate += 1;
-                        if (rover.CurrentYCoordinate > rover.GridMaxYCoordinate)
-                            throw new ArgumentException("Rover cannot move outside the plateau. " +
-                                "Please modify the instructions.");
+                        rover.pointCurrent.Y += 1;
+                        if (rover.pointCurrent.Y > rover.pointGridMax.Y) 
+                            throw new ArgumentException(exceptionMessage);
                         break;
                     }
                 case Direction.South:
                     {
-                        rover.CurrentYCoordinate -= 1;
-                        if (rover.CurrentYCoordinate < rover.GridStartYCoordinate)
-                            throw new ArgumentException("Rover cannot move outside the plateau. " +
-                                "Please modify the instructions.");
+                        rover.pointCurrent.Y -= 1;
+                        if (rover.pointCurrent.Y < rover.pointGridStart.Y)
+                            throw new ArgumentException(exceptionMessage);
                         break;
                     }
                 case Direction.East:
                     {
-                        rover.CurrentXCoordinate += 1;
-                        if (rover.CurrentXCoordinate > rover.GridMaxXCoordinate)
-                            throw new ArgumentException("Rover cannot move outside the plateau. " +
-                                "Please modify the instructions.");
+                        rover.pointCurrent.X += 1;
+                        if (rover.pointCurrent.X > rover.pointGridMax.X)
+                            throw new ArgumentException(exceptionMessage);
                         break;
                     }
                 case Direction.West:
                     {
-                        rover.CurrentXCoordinate -= 1;
-                        if (rover.CurrentXCoordinate < rover.GridStartXCoordinate)
-                            throw new ArgumentException("Rover cannot move outside the plateau. " +
-                                "Please modify the instructions.");
+                        rover.pointCurrent.X -= 1;
+                        if (rover.pointCurrent.X < rover.pointGridStart.X)
+                            throw new ArgumentException(exceptionMessage);
                         break;
                     }
             }
         }
+
+      
     }
 }

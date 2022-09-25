@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 
@@ -23,18 +24,21 @@ namespace MarsRoverService
         public int CurrentXCoordinate { get; set; }
         public int CurrentYCoordinate { get; set; }
         public Direction CurrentDirectionFacing { get; set; }
-               
+
+        public string RoverName { get; set; }
+
+        public Point pointGridStart;
+        public Point pointGridMax;
+        public Point pointCurrent;
+
         public Rover(Plateau plateau)
         {
             //Initialising plateau and assigning value to it
             _plateau = new Plateau();
             _plateau = plateau;
 
-            //Assigning the coordinates of the plateau to the Rover class's local variables
-            GridMaxXCoordinate = _plateau.GridMaxXCoordinate;
-            GridMaxYCoordinate = _plateau.GridMaxYCoordinate;
-            GridStartXCoordinate = _plateau.GridStartXCoordinate;
-            GridStartYCoordinate = _plateau.GridStartYCoordinate;
+            pointGridMax = new Point (_plateau.pointGridMax.X, _plateau.pointGridMax.Y);
+            pointGridStart = new Point(_plateau.pointGridStart.X, _plateau.pointGridStart.Y);
 
             //Dictionary to map Directions to the Acronyms
             _directionDict = new Dictionary<char, Direction>()
@@ -61,12 +65,11 @@ namespace MarsRoverService
         /// <param name="yCoordinate"></param>
         /// <param name="direction"></param>
         public void SetRoverPosition(int xCoordinate, int yCoordinate, char direction)
-        {
-            CurrentXCoordinate = xCoordinate;
-            CurrentYCoordinate = yCoordinate;
+        {          
+            pointCurrent = new Point(xCoordinate, yCoordinate);
             CurrentDirectionFacing = _directionDict[direction];
 
-            ValidateRoverPositionOnThePlateau(GridMaxXCoordinate, GridMaxYCoordinate, xCoordinate, yCoordinate);
+            ValidateRoverPositionOnThePlateau(pointGridMax, pointCurrent);
         }
 
         /// <summary>
@@ -77,14 +80,13 @@ namespace MarsRoverService
         /// <param name="xCoordinate"></param>
         /// <param name="yCoordinate"></param>
         /// <exception cref="ArgumentException"></exception>
-        public void ValidateRoverPositionOnThePlateau(int gridMaxXCoordinate, int gridMaxYCoordinate,
-            int xCoordinate, int yCoordinate)
+        public void ValidateRoverPositionOnThePlateau(Point pointGridMax,Point pointCurrent)
         {
-            var xValueOfRover = xCoordinate >= 0 && xCoordinate <= gridMaxXCoordinate;
-            var yValueOfRover = yCoordinate >= 0 && yCoordinate <= gridMaxYCoordinate;
+            var xValueOfRover = pointCurrent.X > 0 && pointCurrent.X < pointGridMax.X;
+            var yValueOfRover = pointCurrent.Y > 0 && pointCurrent.Y < pointGridMax.Y;
 
             if (!(xValueOfRover && yValueOfRover))
                 throw new ArgumentException("Rover position should not be outside the plateau grid.");
-        }        
+        }
     }
 }

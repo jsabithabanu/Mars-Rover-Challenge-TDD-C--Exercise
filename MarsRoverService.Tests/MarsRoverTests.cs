@@ -33,14 +33,13 @@ public class MarsRoverTests
     [Test]
     public void Test_If_Plateau_Grid_Size_Is_Set_As_Expected()
     {
-        _plateau.GridMaxXCoordinate.Should().Be(5);
-        _plateau.GridMaxYCoordinate.Should().Be(5);
+        _plateau.pointGridMax.X.Should().Be(_GRID_MAX_X_COORDINATE);
+        _plateau.pointGridMax.Y.Should().Be(_GRID_MAX_Y_COORDINATE);
     }
 
     [Test]
     public void Test_If_Plateau_Grid_Size_Is_Valid()
     {
-
         var exception = Assert.Throws<ArgumentException>(() => _plateau.SetPlateauGridSize(-1, 0));
         Assert.That(exception.Message, Is.EqualTo("Please enter a valid plateau grid size."));
 
@@ -53,14 +52,14 @@ public class MarsRoverTests
     {
         //1st Rover
         _rover_R01.SetRoverPosition(1, 2, 'N');
-        _rover_R01.CurrentXCoordinate.Should().Be(1);
-        _rover_R01.CurrentYCoordinate.Should().Be(2);
+        _rover_R01.pointCurrent.X.Should().Be(1);
+        _rover_R01.pointCurrent.Y.Should().Be(2);
         _rover_R01.CurrentDirectionFacing.Should().Be(Direction.North);
 
         //2nd Rover
         _rover_R02.SetRoverPosition(3, 3, 'E');
-        _rover_R02.CurrentXCoordinate.Should().Be(3);
-        _rover_R02.CurrentYCoordinate.Should().Be(3);
+        _rover_R02.pointCurrent.X.Should().Be(3);
+        _rover_R02.pointCurrent.Y.Should().Be(3);
         _rover_R02.CurrentDirectionFacing.Should().Be(Direction.East);
     }
 
