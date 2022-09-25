@@ -121,4 +121,12 @@ public class MarsRoverTests
         _commandCenter.MoveRover(_rover_R02, "MMRMMRMRRM").Should().Be("5 1 E");        
     }
 
+    [Test]
+    public void Test_If_Plateau_Can_Be_Added_By_The_Command_Center()
+    {      
+        Plateau _newPlateau = new();
+        _newPlateau = _commandCenter.AddPlateau(6, 6);
+        _newPlateau.pointGridMax.X.Should().Be(6);
+        _newPlateau.pointGridMax.Y.Should().Be(6);
+    }
 }

@@ -149,9 +149,10 @@ namespace MarsRoverService
             }
         }
 
-        public void AddPlateau(int gridMaxX, int gridMaxY)
-        {
+        public Plateau AddPlateau(int gridMaxX, int gridMaxY)
+        {            
             _plateau.SetPlateauGridSize(gridMaxX, gridMaxY);
+            return _plateau;
         }
 
       
