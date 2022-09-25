@@ -141,5 +141,14 @@ public class MarsRoverTests
         _newRover.pointCurrent.Y.Should().Be(2);
         _newRover.CurrentDirectionFacing.Should().Be(Direction.North);
     }
-    
+
+    [Test]
+    public void Test_If_Rover_Can_Be_Added_And_Moved_By_The_Command_Center()
+    {
+        Plateau _newPlateau = new();
+        _newPlateau = _commandCenter.AddPlateau(6, 6);
+        Rover _newRover = new(_newPlateau);
+        _newRover = _commandCenter.AddRover(1, 2, 'N');
+        _commandCenter.MoveRover(_newRover, "LMLMLMLMM").Should().Be("1 3 N");
+    }
 }
