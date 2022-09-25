@@ -11,7 +11,6 @@ namespace MarsRoverService
         public int GridMaxYCoordinate { get; set; }
         public int GridStartXCoordinate { get; set; }
         public int GridStartYCoordinate { get; set; }
-        //public bool GotObstacles { get; set; }
 
         public void SetPlateauGridSize(int gridMaxXCoordinate, int gridMaxYCoordinate);
     }

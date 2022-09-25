@@ -2,6 +2,7 @@ using NUnit.Framework;
 using FluentAssertions;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace MarsRoverService.Tests;
 
@@ -99,13 +100,15 @@ public class MarsRoverTests
         _rover_R01.SetRoverPosition(1, 2, 'N');
         var exceptionR01Position = Assert.Throws<ArgumentException>(()
             => _commandCenter.MoveRover(_rover_R01, "LMLMLMLMMLMM"));
-        Assert.That(exceptionR01Position.Message, Is.EqualTo("Rover cannot move outside the plateau. Please modify the instructions."));
+        Assert.That(exceptionR01Position.Message, Is.EqualTo("Rover cannot move outside the plateau. " +
+            "It now stands at the position (0, 3) facing West. Please modify the instructions."));
 
         //2nd Rover
         _rover_R02.SetRoverPosition(3, 3, 'E');
         var exceptionR02Position = Assert.Throws<ArgumentException>(()
             => _commandCenter.MoveRover(_rover_R02, "MMRMMRMRRMMM"));
-        Assert.That(exceptionR02Position.Message, Is.EqualTo("Rover cannot move outside the plateau. Please modify the instructions."));
+        Assert.That(exceptionR02Position.Message, Is.EqualTo("Rover cannot move outside the plateau. " +
+            "It now stands at the position (5, 1) facing East. Please modify the instructions."));
 
     }
 
@@ -143,6 +146,16 @@ public class MarsRoverTests
     }
 
     [Test]
+    public void Test_How_Many_Number_Of_Rovers_Can_Be_Added_By_The_Command_Center()
+    {
+        Plateau _newPlateau = new();
+        _newPlateau = _commandCenter.AddPlateau(6, 4);
+        Rover _newRover = new(_newPlateau);
+        _newRover = _commandCenter.AddRover(1, 2, 'N');
+        _commandCenter.PossibleNoOfRovers.Should().Be(12);
+    }
+
+    [Test]
     public void Test_If_Rover_Can_Be_Added_And_Moved_By_The_Command_Center()
     {
         Plateau _newPlateau = new();
@@ -150,5 +163,54 @@ public class MarsRoverTests
         Rover _newRover = new(_newPlateau);
         _newRover = _commandCenter.AddRover(1, 2, 'N');
         _commandCenter.MoveRover(_newRover, "LMLMLMLMM").Should().Be("1 3 N");
+    }
+    
+    [Test]
+    public void Test_If_2_Rovers_Can_Be_Added_On_The_Plateau_And_Moved_By_The_Command_Center()
+    {
+        Plateau _newPlateau = new();
+        _newPlateau = _commandCenter.AddPlateau(6, 6);
+
+        //Rover 1
+        Rover R01 = new(_newPlateau);
+        R01 = _commandCenter.AddRover(1, 2, 'N');
+        _commandCenter.MoveRover(R01, "LMLMLMLMM");
+
+        //Rover 2
+        Rover R02 = new(_newPlateau);
+        R02 = _commandCenter.AddRover(3, 3, 'E');
+        _commandCenter.MoveRover(R02, "MMRMMRMRRM");
+
+        List<Rover> rovers = new List<Rover>();
+        rovers = _commandCenter.GetRoversList().ToList<Rover>();
+
+        rovers[0].pointCurrent.X.Should().Be(1);
+        rovers[0].pointCurrent.Y.Should().Be(3);
+        rovers[0].CurrentDirectionFacing.Should().Be(Direction.North);
+
+        rovers[1].pointCurrent.X.Should().Be(5);
+        rovers[1].pointCurrent.Y.Should().Be(1);
+        rovers[1].CurrentDirectionFacing.Should().Be(Direction.East);
+    }
+    
+    [Test]
+    public void Test_For_Collision_If_2_Rovers_Are_Added_On_The_Plateau_And_Moved_By_The_Command_Center_And_Throw_Exception()
+    {
+        Plateau _newPlateau = new();
+        _newPlateau = _commandCenter.AddPlateau(5, 5);
+
+        //Rover 1
+        Rover R01 = new(_newPlateau);
+        R01 = _commandCenter.AddRover(4, 0, 'S');
+        _commandCenter.MoveRover(R01, "LMLM"); 
+
+        //Rover 2
+        Rover R02 = new(_newPlateau);
+        R02 = _commandCenter.AddRover(4, 2, 'N');        
+        var exceptionR02Position = Assert.Throws<ArgumentException>(()
+            => _commandCenter.MoveRover(R02, "RMRM"));
+        Assert.That(exceptionR02Position.Message, Is.EqualTo("Rover cannot move further. " +
+            "There is a collision ahead. It now stands at the position (5, 2) facing South. " +
+            "Please modify the instructions."));
     }
 }

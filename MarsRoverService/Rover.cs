@@ -7,30 +7,28 @@ using System.Text;
 
 namespace MarsRoverService
 {
-    public class Rover : IRover //, IPlateau
+    public class Rover : IRover
     {
         private const int _DEFAULT_X_VALUE = 0;
         private const int _DEFAULT_Y_VALUE = 0;
         private const char _DEFAULT_FACING = 'N';
         private Plateau _plateau;
         public readonly Dictionary<char, Direction> _directionDict;
-        public readonly Dictionary<char, RoverCommand> _instructionDict;
-
-        public int GridMaxXCoordinate { get; set; }
-        public int GridMaxYCoordinate { get; set; }
-        public int GridStartXCoordinate { get; set; }
-        public int GridStartYCoordinate { get; set; }
-
+        public readonly Dictionary<char, RoverCommand> _instructionDict;        
         public int CurrentXCoordinate { get; set; }
         public int CurrentYCoordinate { get; set; }
         public Direction CurrentDirectionFacing { get; set; }
 
-        public string RoverName { get; set; }
-
         public Point pointGridStart;
         public Point pointGridMax;
         public Point pointCurrent;
+        public Point collisionPoint;
 
+
+        /// <summary>
+        /// Rover constructor
+        /// </summary>
+        /// <param name="plateau"></param>
         public Rover(Plateau plateau)
         {
             //Initialising plateau and assigning value to it
@@ -75,15 +73,13 @@ namespace MarsRoverService
         /// <summary>
         /// Method to validate the Rover's position on the plateau
         /// </summary>
-        /// <param name="gridMaxXCoordinate"></param>
-        /// <param name="gridMaxYCoordinate"></param>
-        /// <param name="xCoordinate"></param>
-        /// <param name="yCoordinate"></param>
+        /// <param name="pointGridMax"></param>
+        /// <param name="pointCurrent"></param>
         /// <exception cref="ArgumentException"></exception>
         public void ValidateRoverPositionOnThePlateau(Point pointGridMax,Point pointCurrent)
         {
-            var xValueOfRover = pointCurrent.X > 0 && pointCurrent.X < pointGridMax.X;
-            var yValueOfRover = pointCurrent.Y > 0 && pointCurrent.Y < pointGridMax.Y;
+            var xValueOfRover = pointCurrent.X >= 0 && pointCurrent.X <= pointGridMax.X;
+            var yValueOfRover = pointCurrent.Y >= 0 && pointCurrent.Y <= pointGridMax.Y;
 
             if (!(xValueOfRover && yValueOfRover))
                 throw new ArgumentException("Rover position should not be outside the plateau grid.");

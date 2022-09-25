@@ -1,23 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace MarsRoverService
 {
     public class CommandCenter
     {
+        #region Variable declrations
         public Direction CurrentDirectionFacing { get; set; }
 
         private Plateau _plateau;
         private Rover _rover;
-        private Rover _rovers;
-        public List<Rover> RoverList = new();
+        public List<Rover> RoversList = new();
+        public int PossibleNoOfRovers;
+
+        #endregion
+
 
         public CommandCenter()
         {
             _plateau = new();
-            RoverList = new();
+            RoversList = new();
         }
 
         /// <summary>
@@ -45,12 +53,14 @@ namespace MarsRoverService
                         break;
                     case RoverCommand.MoveForward:
                         MoveForward(rover);
+                        
                         break;
                     default:
                         throw new ArgumentException("Invalid movement command to the Rover.");
 
                 }
             }
+            rover.collisionPoint = new Point(rover.pointCurrent.X, rover.pointCurrent.Y);
             var directionKey = rover._directionDict.FirstOrDefault(x => x.Value.Equals(rover.CurrentDirectionFacing)).Key.ToString();
             var output = rover.pointCurrent.X + " " + rover.pointCurrent.Y + " " + directionKey;
             return output;
@@ -88,74 +98,196 @@ namespace MarsRoverService
                 _ => throw new ArgumentException("Invalid direction command to the Rover.")
             };
 
+
         /// <summary>
         /// Method to move the Rover forward by one grid point, maintaining the same direction
         /// </summary>
         /// <param name="rover"></param>
         /// <exception cref="ArgumentException"></exception>
-
         private void MoveForward(Rover rover)
         {
-            string exceptionMessage = "Rover cannot move outside the plateau. Please modify the instructions.";          
-
             switch (CurrentDirectionFacing)
             {
                 case Direction.North:
                     {
-                        rover.pointCurrent.Y += 1;
-                        if (rover.pointCurrent.Y > rover.pointGridMax.Y) 
-                            throw new ArgumentException(exceptionMessage);
+                        rover.CurrentDirectionFacing = Direction.North;
+                        if (rover.pointCurrent.Y + 1 > rover.pointGridMax.Y)
+                        {
+                           rover.CurrentDirectionFacing = Direction.North;
+                            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
+                $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
+                $"Please modify the instructions.");
+                        }
+                        else
+                        {
+                            rover.pointCurrent.Y += 1;
+
+                            //Checking for collision points
+                            if (RoversList.Count > 0)
+                            {
+                                for (int i = 0; i < (RoversList.Count) - 1; i++)
+                                {
+                                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
+                                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
+                                    {
+                                        rover.pointCurrent.Y -= 1;                                        
+                                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
+                                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
+                                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
+                                    }
+                                }
+                            }
+                        }
                         break;
                     }
                 case Direction.South:
                     {
-                        rover.pointCurrent.Y -= 1;
-                        if (rover.pointCurrent.Y < rover.pointGridStart.Y)
-                            throw new ArgumentException(exceptionMessage);
+                        rover.CurrentDirectionFacing = Direction.South;
+                        if (rover.pointCurrent.Y - 1 < rover.pointGridStart.Y)
+                        {
+                            rover.CurrentDirectionFacing = Direction.South;
+                            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
+                $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
+                $"Please modify the instructions.");
+                        }
+                        else
+                        {
+                            rover.pointCurrent.Y -= 1;
+
+                            //Checking for collision points
+                            if (RoversList.Count > 0)
+                            {
+                                for (int i = 0; i < (RoversList.Count) - 1; i++)
+                                {
+                                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
+                                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
+                                    {
+                                        rover.pointCurrent.Y += 1;                                        
+                                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
+                                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
+                                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
+                                    }
+                                }
+                            }
+                        }
                         break;
                     }
                 case Direction.East:
                     {
-                        rover.pointCurrent.X += 1;
-                        if (rover.pointCurrent.X > rover.pointGridMax.X)
-                            throw new ArgumentException(exceptionMessage);
+                        rover.CurrentDirectionFacing = Direction.East;
+                        if (rover.pointCurrent.X + 1 > rover.pointGridMax.X)
+                        {
+                            rover.CurrentDirectionFacing = Direction.East;
+                            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
+                $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
+                $"Please modify the instructions.");
+                        }
+                        else
+                        {
+                            rover.pointCurrent.X += 1;
+
+                            //Checking for collision points
+                            if (RoversList.Count > 0)
+                            {
+                                for (int i = 0; i < (RoversList.Count) - 1; i++)
+                                {
+                                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
+                                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
+                                    {
+                                        rover.pointCurrent.X -= 1;
+                                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
+                                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
+                                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
+                                    }
+                                }
+                            }
+                        }
                         break;
                     }
                 case Direction.West:
                     {
-                        rover.pointCurrent.X -= 1;
-                        if (rover.pointCurrent.X < rover.pointGridStart.X)
-                            throw new ArgumentException(exceptionMessage);
+                        rover.CurrentDirectionFacing = Direction.West;
+                        if (rover.pointCurrent.X - 1 < rover.pointGridStart.X)
+                        {
+                            rover.CurrentDirectionFacing = Direction.West;
+                            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
+                $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
+                $"Please modify the instructions.");
+                        }
+                       
+                        else
+                        {
+                            rover.pointCurrent.X -= 1;
+
+                            //Checking for collision points
+                            if (RoversList.Count > 0)
+                            {
+                                for (int i = 0; i < (RoversList.Count) - 1; i++)
+                                {
+                                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
+                                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
+                                    {
+                                        rover.pointCurrent.X += 1;
+                                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
+                                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
+                                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
+                                    }
+                                }
+                            }
+                        }
                         break;
                     }
             }
         }
+        
+        /// <summary>
+        /// Method to get the list of Rovers added
+        /// </summary>
+        /// <returns></returns>
+        public ReadOnlyCollection<Rover> GetRoversList()
+        {
+            return RoversList.AsReadOnly();
+        }
+
+        /// <summary>
+        /// Method to add Rovers on the plateau by the Command center
+        /// </summary>
+        /// <param name="xCoordinate"></param>
+        /// <param name="yCoordinate"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
         public Rover AddRover(int xCoordinate, int yCoordinate, char direction)
         {
-            if ((RoverList != null) && (!RoverList.Any()))
-            {
-                var gridXpoints = _plateau.pointGridMax.X + 1;
-                var gridYpoints = _plateau.pointGridMax.Y + 1;
-                var roversOnX = Math.Round(Convert.ToDouble(gridXpoints) / 2, MidpointRounding.AwayFromZero);
-                var roversOnY = Math.Round(Convert.ToDouble(gridYpoints) / 2, MidpointRounding.AwayFromZero);
-                var possibleNoOfRovers = roversOnX * roversOnY;
+            //Calculating the number of rovers that can be placed on the Plateau
+            var gridXpoints = _plateau.pointGridMax.X + 1;
+            var gridYpoints = _plateau.pointGridMax.Y + 1;
+            var roversOnX = Math.Round(Convert.ToDouble(gridXpoints) / 2, MidpointRounding.AwayFromZero);
+            var roversOnY = Math.Round(Convert.ToDouble(gridYpoints) / 2, MidpointRounding.AwayFromZero);
+            PossibleNoOfRovers = (int)(roversOnX * roversOnY);
 
-                if (RoverList.Count <= possibleNoOfRovers)
+            if (RoversList.Count <= PossibleNoOfRovers)
+            {
+                _rover = new Rover(_plateau);
+                _rover.SetRoverPosition(xCoordinate, yCoordinate, direction);
+                if(RoversList.Count > 0)
                 {
-                    _rover = new Rover(_plateau);
-                    _rover.SetRoverPosition(xCoordinate, yCoordinate, direction);
-                    RoverList.Add(_rover);
+                    _rover.collisionPoint = new(xCoordinate, yCoordinate);
                 }
+                RoversList.Add(_rover);
             }
             return _rover;
         }
 
+        /// <summary>
+        /// Method to add plateau by the Command center
+        /// </summary>
+        /// <param name="gridMaxX"></param>
+        /// <param name="gridMaxY"></param>
+        /// <returns></returns>
         public Plateau AddPlateau(int gridMaxX, int gridMaxY)
         {            
             _plateau.SetPlateauGridSize(gridMaxX, gridMaxY);
             return _plateau;
-        }
-
-      
+        }       
     }
 }
