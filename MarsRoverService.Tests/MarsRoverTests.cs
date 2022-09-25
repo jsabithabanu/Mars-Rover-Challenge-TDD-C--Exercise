@@ -93,6 +93,23 @@ public class MarsRoverTests
     }
 
     [Test]
+    public void Test_If_The_Instructions_Make_Rover_Move_Out_Of_The_Plateau_And_Throw_Exception()
+    {
+        //1st Rover
+        _rover_R01.SetRoverPosition(1, 2, 'N');
+        var exceptionR01Position = Assert.Throws<ArgumentException>(()
+            => _commandCenter.MoveRover(_rover_R01, "LMLMLMLMMLMM"));
+        Assert.That(exceptionR01Position.Message, Is.EqualTo("Rover cannot move outside the plateau. Please modify the instructions."));
+
+        //2nd Rover
+        _rover_R02.SetRoverPosition(3, 3, 'E');
+        var exceptionR02Position = Assert.Throws<ArgumentException>(()
+            => _commandCenter.MoveRover(_rover_R02, "MMRMMRMRRMMM"));
+        Assert.That(exceptionR02Position.Message, Is.EqualTo("Rover cannot move outside the plateau. Please modify the instructions."));
+
+    }
+
+    [Test]
     public void Test_If_Rover_Moves_And_Returns_Position_And_Direction_As_Expected()
     {
         //1st Rover
@@ -101,6 +118,7 @@ public class MarsRoverTests
 
         //2nd Rover
         _rover_R02.SetRoverPosition(3, 3, 'E');
-        _commandCenter.MoveRover(_rover_R02, "MMRMMRMRRM").Should().Be("5 1 E");
+        _commandCenter.MoveRover(_rover_R02, "MMRMMRMRRM").Should().Be("5 1 E");        
     }
+
 }

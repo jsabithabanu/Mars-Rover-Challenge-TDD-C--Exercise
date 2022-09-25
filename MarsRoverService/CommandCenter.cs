@@ -11,10 +11,13 @@ namespace MarsRoverService
 
         private Plateau _plateau;
         private Rover _rover;
+        private Rover _rovers;
+        public List<Rover> RoverList = new();
 
         public CommandCenter()
         {
-            _plateau = new Plateau();
+            _plateau = new();
+            RoverList = new();
         }
 
         /// <summary>
@@ -126,6 +129,29 @@ namespace MarsRoverService
                         break;
                     }
             }
+        }
+        public void AddRover(int xCoordinate, int yCoordinate, char direction)
+        {
+            if ((RoverList != null) && (!RoverList.Any()))
+            {
+                var gridXpoints = _plateau.pointGridMax.X + 1;
+                var gridYpoints = _plateau.pointGridMax.Y + 1;
+                var roversOnX = Math.Round(Convert.ToDouble(gridXpoints) / 2, MidpointRounding.AwayFromZero);
+                var roversOnY = Math.Round(Convert.ToDouble(gridYpoints) / 2, MidpointRounding.AwayFromZero);
+                var possibleNoOfRovers = roversOnX * roversOnY;
+
+                if (RoverList.Count <= possibleNoOfRovers)
+                {
+                    _rover = new Rover(_plateau);
+                    _rover.SetRoverPosition(xCoordinate, yCoordinate, direction);
+                    RoverList.Add(_rover);
+                }
+            }
+        }
+
+        public void AddPlateau(int gridMaxX, int gridMaxY)
+        {
+            _plateau.SetPlateauGridSize(gridMaxX, gridMaxY);
         }
 
       
