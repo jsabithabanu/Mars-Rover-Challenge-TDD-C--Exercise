@@ -37,6 +37,7 @@ namespace MarsRoverService
         /// <exception cref="ArgumentException"></exception>
         public string MoveRover(Rover rover, string movementInstructions)
         {
+            //Breaking down the movement instructions
             var moveCommand = movementInstructions.ToCharArray();
             var instructions = moveCommand.Select(action => rover._instructionDict[action]).ToList();
             this.CurrentDirectionFacing = rover.CurrentDirectionFacing;
@@ -52,15 +53,17 @@ namespace MarsRoverService
                         TurnRight(CurrentDirectionFacing);
                         break;
                     case RoverCommand.MoveForward:
-                        MoveForward(rover);
-                        
+                        MoveForward(rover);                        
                         break;
                     default:
                         throw new ArgumentException("Invalid movement command to the Rover.");
-
                 }
             }
+
+            //Setting the collision point after a move is done
             rover.collisionPoint = new Point(rover.pointCurrent.X, rover.pointCurrent.Y);
+
+            //Setting up the output
             var directionKey = rover._directionDict.FirstOrDefault(x => x.Value.Equals(rover.CurrentDirectionFacing)).Key.ToString();
             var output = rover.pointCurrent.X + " " + rover.pointCurrent.Y + " " + directionKey;
             return output;
@@ -122,21 +125,8 @@ namespace MarsRoverService
                         {
                             rover.pointCurrent.Y += 1;
 
-                            //Checking for collision points
-                            if (RoversList.Count > 0)
-                            {
-                                for (int i = 0; i < (RoversList.Count) - 1; i++)
-                                {
-                                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
-                                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
-                                    {
-                                        rover.pointCurrent.Y -= 1;                                        
-                                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
-                                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
-                                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
-                                    }
-                                }
-                            }
+                            //Checking for collision points                            
+                            CheckForCollisionPoints(rover, CurrentDirectionFacing);
                         }
                         break;
                     }
@@ -154,21 +144,8 @@ namespace MarsRoverService
                         {
                             rover.pointCurrent.Y -= 1;
 
-                            //Checking for collision points
-                            if (RoversList.Count > 0)
-                            {
-                                for (int i = 0; i < (RoversList.Count) - 1; i++)
-                                {
-                                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
-                                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
-                                    {
-                                        rover.pointCurrent.Y += 1;                                        
-                                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
-                                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
-                                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
-                                    }
-                                }
-                            }
+                            //Checking for collision points                           
+                            CheckForCollisionPoints(rover, CurrentDirectionFacing);
                         }
                         break;
                     }
@@ -186,21 +163,8 @@ namespace MarsRoverService
                         {
                             rover.pointCurrent.X += 1;
 
-                            //Checking for collision points
-                            if (RoversList.Count > 0)
-                            {
-                                for (int i = 0; i < (RoversList.Count) - 1; i++)
-                                {
-                                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
-                                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
-                                    {
-                                        rover.pointCurrent.X -= 1;
-                                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
-                                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
-                                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
-                                    }
-                                }
-                            }
+                            //Checking for collision points                            
+                            CheckForCollisionPoints(rover, CurrentDirectionFacing);
                         }
                         break;
                     }
@@ -219,24 +183,51 @@ namespace MarsRoverService
                         {
                             rover.pointCurrent.X -= 1;
 
-                            //Checking for collision points
-                            if (RoversList.Count > 0)
-                            {
-                                for (int i = 0; i < (RoversList.Count) - 1; i++)
-                                {
-                                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
-                                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
-                                    {
-                                        rover.pointCurrent.X += 1;
-                                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
-                                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
-                                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
-                                    }
-                                }
-                            }
+                            //Checking for collision points                            
+                            CheckForCollisionPoints(rover, CurrentDirectionFacing);
                         }
                         break;
                     }
+            }
+        }
+
+        /// <summary>
+        /// Method to check for the collision points and set back the current coordinates for Rover if found
+        /// </summary>
+        /// <param name="rover"></param>
+        /// <param name="direction"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void CheckForCollisionPoints(Rover rover, Direction direction)
+        {
+            //Checking for collision points
+            if (RoversList.Count > 0)
+            {
+                for (int i = 0; i < (RoversList.Count) - 1; i++)
+                {
+                    if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
+                        rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
+                    {
+                        //Setting the coordinate back to the previous point if collision point is found
+                        switch (direction)
+                        {
+                            case Direction.North:
+                                rover.pointCurrent.Y -= 1;
+                                break;
+                            case Direction.South:
+                                rover.pointCurrent.Y += 1;
+                                break;
+                            case Direction.East:
+                                rover.pointCurrent.X -= 1;
+                                break;
+                            case Direction.West:
+                                rover.pointCurrent.X += 1;
+                                break;
+                        }
+                        throw new ArgumentException($"Rover cannot move further. There is a collision ahead. " +
+                            $"It now stands at the position ({rover.pointCurrent.X}, {rover.pointCurrent.Y}) " +
+                            $"facing {rover.CurrentDirectionFacing}. Please modify the instructions.");
+                    }
+                }
             }
         }
         
