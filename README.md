@@ -1,7 +1,7 @@
 # Mars-Rover-Challenge-TDD-CSharp-Exercise
 Mars Rover Challenge - TDD - C# - Exercise 
 
-Based on the Mars Rover Kata requirements, this project is completely developed using TDD approach and AAA model.
+Based on the Mars Rover Kata requirements, this project is completely developed using TDD approach and AAA model. This can be checked only by running the tests. No console input is included.
 
 Brief description of the requirements:
 
@@ -83,7 +83,7 @@ Their coordinates and direction facing are tested via the returned outputs after
 When more than one Rover is on the plateau, there is a possibility for collision. So it is tested for collision if more than one Rover is added to the plateau. If the Rover01 moves and if it's next moving coordinate as per the move instruction has got Rover02 occupied, then Rover01 will stop moving just before the Rover02's coordinate and the exception message is given to user including the current position and direction facing of the Rover. For example, "Rover cannot move further. There is a collision ahead. It now stands at the position (5, 2) facing South. Please modify the instructions."
 
 Thus all the basic scenarios are covered and tested thoroughly for the Rovers to move around the plateau.
-This project is still extendable to add different shaped plateaus via the IPlateau interface and to add different types of vehicles other than Rovers via the IRover interface.
+This project is still extendable to add different shaped plateaus via the IPlateau interface and to add different types of vehicles other than Rovers via the IRover interface. Looking forward to include the console input code in Program.cs in future to see the project running interactively.
 
 
 
