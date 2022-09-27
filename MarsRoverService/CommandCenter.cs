@@ -117,9 +117,7 @@ namespace MarsRoverService
                         if (rover.pointCurrent.Y + 1 > rover.pointGridMax.Y)
                         {
                            rover.CurrentDirectionFacing = Direction.North;
-                            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
-                $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
-                $"Please modify the instructions.");
+                           CallException(rover);
                         }
                         else
                         {
@@ -136,9 +134,7 @@ namespace MarsRoverService
                         if (rover.pointCurrent.Y - 1 < rover.pointGridStart.Y)
                         {
                             rover.CurrentDirectionFacing = Direction.South;
-                            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
-                $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
-                $"Please modify the instructions.");
+                            CallException(rover);
                         }
                         else
                         {
@@ -155,9 +151,7 @@ namespace MarsRoverService
                         if (rover.pointCurrent.X + 1 > rover.pointGridMax.X)
                         {
                             rover.CurrentDirectionFacing = Direction.East;
-                            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
-                $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
-                $"Please modify the instructions.");
+                            CallException(rover);
                         }
                         else
                         {
@@ -174,11 +168,8 @@ namespace MarsRoverService
                         if (rover.pointCurrent.X - 1 < rover.pointGridStart.X)
                         {
                             rover.CurrentDirectionFacing = Direction.West;
-                            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
-                $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
-                $"Please modify the instructions.");
-                        }
-                       
+                            CallException(rover);
+                        }                       
                         else
                         {
                             rover.pointCurrent.X -= 1;
@@ -189,6 +180,18 @@ namespace MarsRoverService
                         break;
                     }
             }
+        }
+
+        /// <summary>
+        /// Method to throw an exception when the Rover should move outside the plateau based on the instructions
+        /// </summary>
+        /// <param name="rover"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void CallException(Rover rover)
+        {
+            throw new ArgumentException($"Rover cannot move outside the plateau. It now stands at the position " +
+                    $"({rover.pointCurrent.X}, {rover.pointCurrent.Y}) facing {rover.CurrentDirectionFacing}. " +
+                    $"Please modify the instructions.");
         }
 
         /// <summary>
@@ -249,7 +252,9 @@ namespace MarsRoverService
         /// <returns></returns>
         public Rover AddRover(int xCoordinate, int yCoordinate, char direction)
         {
-            //Calculating the number of rovers that can be placed on the Plateau
+            /* Calculating the number of rovers that can be placed on the Plateau.
+               This formula allows atleast 1 grid point for each Rover to move around.
+               Based on this, it calculates the number of Rovers can be placed on the plateau. */
             var gridXpoints = _plateau.pointGridMax.X + 1;
             var gridYpoints = _plateau.pointGridMax.Y + 1;
             var roversOnX = Math.Round(Convert.ToDouble(gridXpoints) / 2, MidpointRounding.AwayFromZero);
