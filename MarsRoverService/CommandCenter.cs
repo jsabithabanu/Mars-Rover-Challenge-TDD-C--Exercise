@@ -39,7 +39,7 @@ namespace MarsRoverService
         {
             //Breaking down the movement instructions
             var moveCommand = movementInstructions.ToCharArray();
-            var instructions = moveCommand.Select(action => rover._instructionDict[action]).ToList();
+            var instructions = moveCommand.Select(action => rover._instructionDict[Char.ToUpper(action)]).ToList();
             this.CurrentDirectionFacing = rover.CurrentDirectionFacing;
 
             foreach (var movement in instructions)
@@ -210,7 +210,7 @@ namespace MarsRoverService
                     if (rover.pointCurrent.X == RoversList[i].collisionPoint.X &&
                         rover.pointCurrent.Y == RoversList[i].collisionPoint.Y)
                     {
-                        //Setting the coordinate back to the previous point if collision point is found
+                        //Setting the coordinate back to the previous point if collision point is found ahead
                         switch (direction)
                         {
                             case Direction.North:

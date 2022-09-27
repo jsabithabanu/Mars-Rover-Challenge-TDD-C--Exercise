@@ -65,7 +65,7 @@ namespace MarsRoverService
         public void SetRoverPosition(int xCoordinate, int yCoordinate, char direction)
         {          
             pointCurrent = new Point(xCoordinate, yCoordinate);
-            CurrentDirectionFacing = _directionDict[direction];
+            CurrentDirectionFacing = _directionDict[Char.ToUpper(direction)];
 
             ValidateRoverPositionOnThePlateau(pointGridMax, pointCurrent);
         }

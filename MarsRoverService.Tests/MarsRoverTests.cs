@@ -65,6 +65,22 @@ public class MarsRoverTests
     }
 
     [Test]
+    public void Test_If_Rover_Direction_Given_In_Lowercase_Is_Accepted_As_Input_And_The_Rover_Is_Set_As_Expected()
+    {
+        //1st Rover
+        _rover_R01.SetRoverPosition(1, 2, 'n');
+        _rover_R01.pointCurrent.X.Should().Be(1);
+        _rover_R01.pointCurrent.Y.Should().Be(2);
+        _rover_R01.CurrentDirectionFacing.Should().Be(Direction.North);
+
+        //2nd Rover
+        _rover_R02.SetRoverPosition(3, 3, 'e');
+        _rover_R02.pointCurrent.X.Should().Be(3);
+        _rover_R02.pointCurrent.Y.Should().Be(3);
+        _rover_R02.CurrentDirectionFacing.Should().Be(Direction.East);
+    }
+
+    [Test]
     public void Test_If_Rover_Is_Placed_Within_The_Palteau_As_Expected()
     {
         //1st Rover
@@ -84,12 +100,12 @@ public class MarsRoverTests
     {   
         //1st Rover
         _rover_R01.SetRoverPosition(1, 2, 'N');
-        _commandCenter.MoveRover(_rover_R01, "LMLMLMLMM");
+        _commandCenter.MoveRover(_rover_R01, "LMLMLmlMM");
         _commandCenter.CurrentDirectionFacing.Should().Be(Direction.North);
 
         //2nd Rover
         _rover_R02.SetRoverPosition(3, 3, 'E');
-        _commandCenter.MoveRover(_rover_R02, "MMRMMRMRRM");
+        _commandCenter.MoveRover(_rover_R02, "MMRMMRMRrm");
         _commandCenter.CurrentDirectionFacing.Should().Be(Direction.East);
     }
 
@@ -211,6 +227,32 @@ public class MarsRoverTests
             => _commandCenter.MoveRover(R02, "RMRM"));
         Assert.That(exceptionR02Position.Message, Is.EqualTo("Rover cannot move further. " +
             "There is a collision ahead. It now stands at the position (5, 2) facing South. " +
+            "Please modify the instructions."));
+    }
+
+    [Test]
+    public void Test_For_Collision_If_3_Rovers_Are_Added_On_The_Plateau_And_Moved_By_The_Command_Center_And_Throw_Exception()
+    {
+        Plateau _newPlateau = new();
+        _newPlateau = _commandCenter.AddPlateau(5, 5);
+
+        //Rover 1
+        Rover R01 = new(_newPlateau);
+        R01 = _commandCenter.AddRover(4, 0, 'S');
+        _commandCenter.MoveRover(R01, "LMLM");
+
+        //Rover 2
+        Rover R02 = new(_newPlateau);
+        R02 = _commandCenter.AddRover(4, 2, 'N');
+        _commandCenter.MoveRover(R02, "RM");
+
+        //Rover 3
+        Rover R03 = new(_newPlateau);
+        R02 = _commandCenter.AddRover(4, 3, 'N');
+        var exceptionR02Position = Assert.Throws<ArgumentException>(()
+            => _commandCenter.MoveRover(R02, "RMRM"));
+        Assert.That(exceptionR02Position.Message, Is.EqualTo("Rover cannot move further. " +
+            "There is a collision ahead. It now stands at the position (5, 3) facing South. " +
             "Please modify the instructions."));
     }
 }
