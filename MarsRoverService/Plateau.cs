@@ -33,7 +33,7 @@ namespace MarsRoverService
         public void ValidatePlateauGridSize(Point pointGridSize)
         {
             if(pointGridSize.X < 0 || pointGridSize.Y < 0)
-                throw new ArgumentException("Please enter a valid plateau grid size.");
+                throw new ArgumentException("Plateau grid coordinates can't be negative. Please enter a valid plateau grid size.");
 
             if(pointGridSize.X == _STARTX && pointGridSize.Y == _STARTY)
                 throw new ArgumentException($"The plateau grid size must be greater than ({_STARTX}, {_STARTX})");

@@ -81,6 +81,9 @@ namespace MarsRoverService
             var xValueOfRover = pointCurrent.X >= 0 && pointCurrent.X <= pointGridMax.X;
             var yValueOfRover = pointCurrent.Y >= 0 && pointCurrent.Y <= pointGridMax.Y;
 
+            if (pointCurrent.X < 0 || pointCurrent.Y < 0)
+                throw new ArgumentException("Rover coordinates can't be negative. Please enter a valid Rover position.");
+
             if (!(xValueOfRover && yValueOfRover))
                 throw new ArgumentException("Rover position should not be outside the plateau grid.");
         }

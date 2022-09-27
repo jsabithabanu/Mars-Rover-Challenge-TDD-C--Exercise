@@ -39,10 +39,26 @@ public class MarsRoverTests
     }
 
     [Test]
+    public void Test_If_Plateau_Grid_Size_Can_Be_Set_As_A_Rectangle()
+    {
+        _plateau.SetPlateauGridSize(3, 4);
+        _plateau.pointGridMax.X.Should().Be(3);
+        _plateau.pointGridMax.Y.Should().Be(4);
+    }
+
+    [Test]
+    public void Test_If_Plateau_Grid_Size_Can_Be_Set_As_A_Square()
+    {
+        _plateau.SetPlateauGridSize(3, 3);
+        _plateau.pointGridMax.X.Should().Be(3);
+        _plateau.pointGridMax.Y.Should().Be(3);
+    }
+
+    [Test]
     public void Test_If_Plateau_Grid_Size_Is_Valid()
     {
         var exception = Assert.Throws<ArgumentException>(() => _plateau.SetPlateauGridSize(-1, 0));
-        Assert.That(exception.Message, Is.EqualTo("Please enter a valid plateau grid size."));
+        Assert.That(exception.Message, Is.EqualTo("Plateau grid coordinates can't be negative. Please enter a valid plateau grid size."));
 
         var exceptionGridSize = Assert.Throws<ArgumentException>(() => _plateau.SetPlateauGridSize(0, 0));
         Assert.That(exceptionGridSize.Message, Is.EqualTo("The plateau grid size must be greater than (0, 0)"));
@@ -62,6 +78,16 @@ public class MarsRoverTests
         _rover_R02.pointCurrent.X.Should().Be(3);
         _rover_R02.pointCurrent.Y.Should().Be(3);
         _rover_R02.CurrentDirectionFacing.Should().Be(Direction.East);
+    }
+
+    [Test]
+    public void Test_If_Rover_Coordinates_Are_Valid()
+    {
+        var exception = Assert.Throws<ArgumentException>(() => _rover_R01.SetRoverPosition(-1, 2, 'N'));
+        Assert.That(exception.Message, Is.EqualTo("Rover coordinates can't be negative. Please enter a valid Rover position."));
+
+        var exceptionGridSize = Assert.Throws<ArgumentException>(() => _rover_R02.SetRoverPosition(3, -7, 'E'));
+        Assert.That(exceptionGridSize.Message, Is.EqualTo("Rover coordinates can't be negative. Please enter a valid Rover position."));
     }
 
     [Test]
@@ -92,7 +118,6 @@ public class MarsRoverTests
         var exceptionR02Position = Assert.Throws<ArgumentException>(()
             => _rover_R02.SetRoverPosition(7, 5, 'N'));
         Assert.That(exceptionR02Position.Message, Is.EqualTo("Rover position should not be outside the plateau grid."));
-
     }
 
     [Test]
