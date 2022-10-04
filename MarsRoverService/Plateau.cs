@@ -21,7 +21,11 @@ namespace MarsRoverService
         public Point pointGridMax;
 
 
-
+        /// <summary>
+        /// Method to set the plateau grid size
+        /// </summary>
+        /// <param name="gridMaxXCoordinate"></param>
+        /// <param name="gridMaxYCoordinate"></param>
         public void SetPlateauGridSize(int gridMaxXCoordinate, int gridMaxYCoordinate)
         {
             pointGridStart = new Point(_STARTX, _STARTY);
@@ -30,6 +34,11 @@ namespace MarsRoverService
             ValidatePlateauGridSize(pointGridMax);
         }
 
+        /// <summary>
+        /// Method to validate the plateau grid size
+        /// </summary>
+        /// <param name="pointGridSize"></param>
+        /// <exception cref="ArgumentException"></exception>
         public void ValidatePlateauGridSize(Point pointGridSize)
         {
             if(pointGridSize.X < 0 || pointGridSize.Y < 0)
