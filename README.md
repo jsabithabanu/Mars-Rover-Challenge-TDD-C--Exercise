@@ -1,15 +1,15 @@
-### Mars-Rover-Challenge-TDD-CSharp-Exercise
-Mars Rover Challenge - TDD - C# - Exercise 
+###### Mars-Rover-Challenge-TDD-CSharp-Exercise
+####Mars Rover Challenge - TDD - C# - Exercise 
 
 Based on the Mars Rover Kata requirements, this project is completely developed using TDD approach and AAA model. This can be checked only by running the tests. No console input is included.
 
-Brief description of the requirements:
+###Brief description of the requirements:
 
 It is assumed that the plateau is a square or rectangular grid.
 Representation of a Rover’s Position on the Plateau
 The Plateau is divided into a grid. A Rover’s position is represented by x and y co-ordinates and the letters N, S, W, E to represent North,
 South, West, East (the four cardinal compass points) respectively. Enum is used in the project to represent the directions.
-Example
+##Example
 0 0 N
 This means the Rover is at the bottom-left corner facing in the North direction.
 
@@ -18,7 +18,7 @@ To move a Rover around the Plateau, a string of letters is sent to a Rover. L Sp
 
 N.B. Assume that the square directly North from (x, y) is (x, y+1).
 
-First Line of Input to the Program
+##First Line of Input to the Program
 The first line inputted into the program represents the upper-right coordinates of the Plateau.
 5 5
 This Plateau has maximum (x, y) co-ordinates of (5, 5). (N.B.) Assume that the lower-left coordinates is (0, 0).
@@ -26,33 +26,33 @@ Subsequent Lines of Input into the Program - Input to Rovers
 This represents the instructions to move the rovers.
 Each rover receives two lines of input.
 
-First Line of Input to a Rover
+##First Line of Input to a Rover
 The Rover’s position is represented by two integers representing the X and Y coordinates and a letter representing where the Rover is facing (its
 orientation).
 1 2 N
 
-Second Line of Input to a Rover
+##Second Line of Input to a Rover
 A string of letters representing the instructions to move the Rover around the Plateau.
 Movement Rules
 Rovers move sequentially, this means that the first Rover needs to finish moving first before the next one can move.
 Output
 For each Rover, the output represents its final position (final coordinates and where it is facing).
 
-Description of the TDD approach and the development of the Kata exercise:
+###Description of the TDD approach and the development of the Kata exercise:
 
 Firstly, the UML representation of the exercise is done using class diagram, based on the requirements. (The class diagram got changed eventually in parallel with testing and coding.)
 The final version of the class diagram contains:
 
-Classes:
+###Classes:
 Plateau
 Rover
 CommandCenter
 
-Interfaces:
+###Interfaces:
 IPlateau
 IRover
 
-Enums:
+###Enums:
 Direction
 RoverCommand
 
@@ -60,7 +60,7 @@ The class Plateau implement the interface IPlateau and the class Rover implement
 The IPlateau interface was added as there are chances to add different shaped plateaus in future. This will be helpful in extending the kata exercise.
 The IRover interface was added as there are chances to add different vehicles on the plateau in future. This will be helpful in extending the kata exercise.
 
-TDD - Test Driven Development of the Mars Rover Kata 
+####TDD - Test Driven Development of the Mars Rover Kata 
 
 First, the plateau's grid size is set up and tested. The plateau can be a square or a rectangle.
 It is validated to check whether the plateau grid size entered is valid and also the plateau grid size is greater than starting point (0,0). Exception messages are shown to the user for the validations.
