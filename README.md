@@ -93,7 +93,7 @@ The IRover interface was added as there are chances to add different vehicles on
 
 ### Conclusion
 
-Thus all the basic scenarios are covered and tested thoroughly for the Rovers to move around the plateau using the Test Driven Development approach.
+Thus all the basic scenarios are covered - developed and tested thoroughly for the Rovers to move around the plateau using the Test Driven Development approach.
 
 ### Extendable Features
 This project is still extendable to add different shaped plateaus via the IPlateau interface and to add different types of vehicles other than Rovers via the IRover interface. Looking forward to include the console input code in Program.cs in future to see the project running interactively.
